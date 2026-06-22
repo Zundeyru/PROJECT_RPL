@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sistem Kantin Online Universitas Muhammadiyah Malang - Pesan makanan online dari berbagai warung kantin UMM">
+    <title>E-Kantin UMM | Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Main App Container -->
+    <main id="app-container">
+
+        <!-- ================= LOGIN PAGE ================= -->
+        <div id="login-view" class="view-section active">
+            <div class="login-wrapper umm-mobile-wrapper">
+                
+                <!-- Left Side: Hero Illustration (Desktop Only) -->
+                <div class="login-hero-section">
+                    <div class="hero-overlay"></div>
+                    <div class="hero-content">
+                        <div class="hero-badge">Portal Digital</div>
+                        <h1>Selamat Datang di Portal UMM</h1>
+                        <p>Sistem Informasi Akademik & Layanan Mahasiswa Terpadu Universitas Muhammadiyah Malang.</p>
+                        <div class="hero-features">
+                            <div class="feature-item"><i class="fas fa-graduation-cap"></i> Akademik</div>
+                            <div class="feature-item"><i class="fas fa-wallet"></i> Keuangan</div>
+                            <div class="feature-item"><i class="fas fa-book"></i> Perpustakaan</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="login-card umm-theme">
+                    <div class="umm-header">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f6/Logo_UMM_Universitas_Muhammadiyah_Malang.png" alt="Logo UMM" class="umm-logo">
+                        <h1>UMM</h1>
+                        <p>Universitas Muhammadiyah Malang</p>
+                    </div>
+                    <div class="umm-form-body">
+                        <!-- LOGIN SECTION -->
+                        <div id="login-section">
+                            <form id="login-form" class="login-form">
+                                <div class="form-field" id="field-username">
+                                    <label for="login-username">Username / NIM</label>
+                                    <div class="umm-input-icon">
+                                        <i class="fas fa-user"></i>
+                                        <input type="text" id="login-username" placeholder="Masukkan Username / NIM" autocomplete="username">
+                                    </div>
+                                    <span class="field-error" id="err-username"></span>
+                                </div>
+                                <div class="form-field" id="field-password">
+                                    <label for="login-password">Password</label>
+                                    <div class="umm-input-icon">
+                                        <i class="fas fa-lock"></i>
+                                        <input type="password" id="login-password" placeholder="Masukan Password Anda" autocomplete="current-password">
+                                        <button type="button" class="toggle-password" id="toggle-password" style="color: #8b5a2b; right: 10px;"><i class="fas fa-eye"></i></button>
+                                    </div>
+                                    <span class="field-error" id="err-password"></span>
+                                </div>
+                                <div id="login-error-banner" class="login-error-banner" style="display:none;">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span id="login-error-text"></span>
+                                </div>
+                                <button type="submit" class="btn-umm-login" id="btn-login-submit">
+                                    MASUK
+                                </button>
+                            </form>
+                            <div style="text-align: center; margin-top: 15px; font-size: 13px;">
+                                <span style="color: #666;">Belum punya akun?</span> 
+                                <a href="#" id="show-signup" style="color: #004d40; font-weight: bold; text-decoration: none;">Daftar di sini</a>
+                            </div>
+                            
+                            <!-- Demo Accounts -->
+                            <div class="login-hint" style="margin-top: 15px; padding-top: 15px;">
+                                <div class="hint-accounts">
+                                    <button class="hint-btn" onclick="fillLogin('admin','KantinUmm2026!')">Admin</button>
+                                    <button class="hint-btn" onclick="fillLogin('penjual1','KantinUmm2026!')">Penjual</button>
+                                    <button class="hint-btn" onclick="fillLogin('pembeli1','KantinUmm2026!')">Pembeli</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SIGN UP SECTION -->
+                        <div id="signup-section" style="display: none;">
+                            <form id="signup-form" class="login-form">
+                                <div class="form-field">
+                                    <label for="signup-name">Nama Lengkap</label>
+                                    <div class="umm-input-icon">
+                                        <i class="fas fa-id-card"></i>
+                                        <input type="text" id="signup-name" placeholder="Masukkan Nama Lengkap" required>
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label for="signup-nim">NIM</label>
+                                    <div class="umm-input-icon">
+                                        <i class="fas fa-graduation-cap"></i>
+                                        <input type="text" id="signup-nim" placeholder="Masukkan NIM (Min. 10 digit)" required>
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label for="signup-username">Username</label>
+                                    <div class="umm-input-icon">
+                                        <i class="fas fa-user"></i>
+                                        <input type="text" id="signup-username" placeholder="Buat Username" required>
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label for="signup-password">Password</label>
+                                    <div class="umm-input-icon">
+                                        <i class="fas fa-lock"></i>
+                                        <input type="password" id="signup-password" placeholder="Buat Password" required>
+                                    </div>
+                                </div>
+                                <div id="signup-error-banner" class="login-error-banner" style="display:none; margin-bottom: 15px;">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span id="signup-error-text"></span>
+                                </div>
+                                <button type="submit" class="btn-umm-login" id="btn-signup-submit">
+                                    DAFTAR SEKARANG
+                                </button>
+                            </form>
+                            <div style="text-align: center; margin-top: 15px; font-size: 13px;">
+                                <span style="color: #666;">Sudah punya akun?</span> 
+                                <a href="#" id="show-login" style="color: #8b5a2b; font-weight: bold; text-decoration: none;">Masuk di sini</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Core Logic for Initial Data & Redirect -->
+    <script src="login.js?v=2"></script>
+</body>
+</html>

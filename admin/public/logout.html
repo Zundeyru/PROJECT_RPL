@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Logging out...</title>
+</head>
+<body>
+    <script>
+        // Hapus sesi seketika dengan vanilla JS (bypass Next.js overhead)
+        try {
+            localStorage.removeItem("umm_active_user");
+        } catch(e) {}
+        
+        var origin = localStorage.getItem("umm_login_origin");
+        var fallbackUrl = "http://127.0.0.1:5500/index.html";
+        
+        // Langsung redirect
+        window.location.replace(origin ? origin : fallbackUrl);
+    </script>
+</body>
+</html>

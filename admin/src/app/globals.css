@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+@theme {
+  /* ─── Core Brand Colors ─── */
+  --color-primary:        #8C5A35;
+  --color-primary-light:  #A46B3F;
+  --color-primary-hover:  #7A4E2D;
+  --color-primary-subtle: #F5EDE5;
+
+  /* ─── Backgrounds ─── */
+  --color-background:     #FDFBF7;
+  --color-card:           #FFFFFF;
+  --color-card-warm:      #FBF7F2;
+
+  /* ─── Sidebar ─── */
+  --color-sidebar:        #F6EBE1;
+  --color-sidebar-hover:  #EDD9C8;
+  --color-sidebar-text:   #5C3D23;
+  --color-sidebar-border: #E8D5C4;
+
+  /* ─── Typography ─── */
+  --color-text-primary:   #2C1A0E;
+  --color-text-secondary: #8B6B53;
+  --color-text-muted:     #B89880;
+
+  /* ─── Borders ─── */
+  --color-border:         #EDE0D4;
+  --color-border-subtle:  #F4EBE2;
+
+  /* ─── Status: Aktif ─── */
+  --color-status-aktif:        #E8F5EE;
+  --color-status-aktif-text:   #1B7A3E;
+  --color-status-aktif-dot:    #2ECC71;
+
+  /* ─── Status: Nonaktif ─── */
+  --color-status-nonaktif:      #FDE8E8;
+  --color-status-nonaktif-text: #C0392B;
+  --color-status-nonaktif-dot:  #E74C3C;
+
+  /* ─── Status: Libur ─── */
+  --color-status-libur:      #FEF3D8;
+  --color-status-libur-text: #B7770D;
+  --color-status-libur-dot:  #F39C12;
+
+  /* ─── Danger / Success ─── */
+  --color-danger:  #C0392B;
+  --color-success: #27AE60;
+
+  /* ─── Font ─── */
+  --font-sans: var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
+}
+
+:root {
+  --background: var(--color-background);
+  --foreground: var(--color-text-primary);
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* ── Scrollbar Polish ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+
+/* ── No-scrollbar utility ── */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Soft card shadow ── */
+.shadow-card {
+  box-shadow: 0 2px 8px rgba(140, 90, 53, 0.06), 0 1px 2px rgba(0,0,0,0.04);
+}
+.shadow-card-hover {
+  box-shadow: 0 8px 24px rgba(140, 90, 53, 0.12), 0 2px 6px rgba(0,0,0,0.06);
+}
+
+/* ── Modal animation ── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+.animate-fade-in  { animation: fadeIn  0.2s ease forwards; }
+.animate-slide-up { animation: slideUp 0.25s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+
+/* ── Toast animation ── */
+@keyframes toastSlide {
+  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0);    }
+}
+.animate-toast { animation: toastSlide 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards; }

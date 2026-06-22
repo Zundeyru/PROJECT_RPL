@@ -1,0 +1,62 @@
+[
+  {
+    "id": "1",
+    "username": "admin",
+    "password": "KantinUmm2026!",
+    "name": "Admin Utama",
+    "role": "admin",
+    "storename": null,
+    "nim": null,
+    "faculty": null,
+    "status": "aktif",
+    "gender": null
+  },
+  {
+    "id": "2",
+    "username": "penjual1",
+    "password": "KantinUmm2026!",
+    "name": "Pak Budi",
+    "role": "seller",
+    "storename": "Toko Budi Jaya",
+    "nim": null,
+    "faculty": null,
+    "status": "aktif",
+    "gender": null
+  },
+  {
+    "id": "3",
+    "username": "pembeli1",
+    "password": "KantinUmm2026!",
+    "name": "Andi Mahasiswa",
+    "role": "buyer",
+    "storename": null,
+    "nim": "202410370311232",
+    "faculty": "Fakultas Teknik",
+    "status": "aktif",
+    "gender": "Laki-laki"
+  },
+  {
+    "id": "4",
+    "username": "iqbal",
+    "password": "KantinUmm2026!",
+    "name": "Muhammad Iqbal Habibi",
+    "role": "buyer",
+    "storename": null,
+    "nim": "202410370311231",
+    "faculty": "Fakultas Teknik",
+    "status": "aktif",
+    "gender": "Laki-laki"
+  },
+  {
+    "id": "SLR-1782080100194",
+    "username": "penjual2",
+    "password": "KantinUmm123!",
+    "name": "Maill eee",
+    "role": "seller",
+    "storename": null,
+    "nim": null,
+    "faculty": null,
+    "status": "aktif",
+    "gender": null
+  }
+]

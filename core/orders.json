@@ -1,0 +1,134 @@
+[
+  {
+    "id": "ORD-1782077613517",
+    "buyer_id": "3",
+    "buyer_name": "Andi Mahasiswa",
+    "store_id": "S1",
+    "store_name": "Nasi Padang Bu Jamilah",
+    "items": [
+      {
+        "qty": 1,
+        "name": "Nasi Goreng",
+        "notes": "",
+        "menuId": "1",
+        "priceAtTime": 13000
+      }
+    ],
+    "notes": "awdadawd",
+    "total_amount": 13000,
+    "status": "Selesai",
+    "service_method": "Makan di Tempat",
+    "payment_method": "Cash",
+    "created_at": "2026-06-21T21:33:33.517+00:00"
+  },
+  {
+    "id": "ORD-1782077734462",
+    "buyer_id": "3",
+    "buyer_name": "Andi Mahasiswa",
+    "store_id": "S1",
+    "store_name": "Nasi Padang Bu Jamilah",
+    "items": [
+      {
+        "qty": 1,
+        "name": "Es Milo",
+        "notes": "Banyakin Es Batunya yahhhhhh",
+        "menuId": "2",
+        "priceAtTime": 5000
+      }
+    ],
+    "notes": "",
+    "total_amount": 5000,
+    "status": "Selesai",
+    "service_method": "Makan di Tempat",
+    "payment_method": "Bank BCA",
+    "created_at": "2026-06-21T21:35:34.462+00:00"
+  },
+  {
+    "id": "ORD-1782077899831",
+    "buyer_id": "3",
+    "buyer_name": "Andi Mahasiswa",
+    "store_id": "S1",
+    "store_name": "Nasi Padang Bu Jamilah",
+    "items": [
+      {
+        "qty": 1,
+        "name": "Nasi Goreng",
+        "notes": "",
+        "menuId": "1",
+        "priceAtTime": 13000
+      }
+    ],
+    "notes": "",
+    "total_amount": 13000,
+    "status": "Selesai",
+    "service_method": "Take Away",
+    "payment_method": "Bank BCA",
+    "created_at": "2026-06-21T21:38:19.831+00:00"
+  },
+  {
+    "id": "ORD-1782078329257",
+    "buyer_id": "3",
+    "buyer_name": "Andi Mahasiswa",
+    "store_id": "S1",
+    "store_name": "Nasi Padang Bu Jamilah",
+    "items": [
+      {
+        "qty": 1,
+        "name": "Es Milo",
+        "notes": "",
+        "menuId": "2",
+        "priceAtTime": 5000
+      }
+    ],
+    "notes": "",
+    "total_amount": 5000,
+    "status": "Selesai",
+    "service_method": "Makan di Tempat",
+    "payment_method": "Cash",
+    "created_at": "2026-06-21T21:45:29.258+00:00"
+  },
+  {
+    "id": "ORD-1782078575806",
+    "buyer_id": "3",
+    "buyer_name": "Andi Mahasiswa",
+    "store_id": "S1",
+    "store_name": "Nasi Padang Bu Jamilah",
+    "items": [
+      {
+        "qty": 1,
+        "name": "Es Milo",
+        "notes": "",
+        "menuId": "2",
+        "priceAtTime": 5000
+      }
+    ],
+    "notes": "ewfwfewfd",
+    "total_amount": 5000,
+    "status": "Selesai",
+    "service_method": "Take Away",
+    "payment_method": "Bank BCA",
+    "created_at": "2026-06-21T21:49:35.806+00:00"
+  },
+  {
+    "id": "ORD-1782081305160",
+    "buyer_id": "3",
+    "buyer_name": "Andi Mahasiswa",
+    "store_id": "S1",
+    "store_name": "Nasi Padang Bu Jamilah",
+    "items": [
+      {
+        "qty": 1,
+        "name": "Rendang Balado",
+        "notes": "",
+        "menuId": "MNU-1782079266969",
+        "priceAtTime": 14000
+      }
+    ],
+    "notes": "Yng pedasss bukkkk",
+    "total_amount": 14000,
+    "status": "Selesai",
+    "service_method": "Makan di Tempat",
+    "payment_method": "Bank BCA",
+    "created_at": "2026-06-21T22:35:05.16+00:00"
+  }
+]

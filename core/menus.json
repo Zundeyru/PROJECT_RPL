@@ -1,0 +1,38 @@
+[
+  {
+    "id": "1",
+    "storeid": "S1",
+    "name": "Nasi Goreng",
+    "price": 13000,
+    "category": "Makanan",
+    "image": "",
+    "isavailable": true
+  },
+  {
+    "id": "2",
+    "storeid": "S1",
+    "name": "Es Milo",
+    "price": 5000,
+    "category": "Minuman",
+    "image": "",
+    "isavailable": true
+  },
+  {
+    "id": "MNU-1782079266969",
+    "storeid": "S1",
+    "name": "Rendang Balado",
+    "price": 14000,
+    "category": "Makanan",
+    "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80",
+    "isavailable": true
+  },
+  {
+    "id": "MNU-1782080374353",
+    "storeid": "S-1782080100532",
+    "name": "Ayam Kicau Kicau",
+    "price": 25000,
+    "category": "Makanan",
+    "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80",
+    "isavailable": true
+  }
+]
