@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Kantin UMM - Penjual</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/f/f6/Logo_UMM_Universitas_Muhammadiyah_Malang.png" alt="UMM" class="nav-logo">
+            <span>E-Kantin <span class="brand-highlight">UMM</span></span>
+        </div>
+        <div class="nav-menu">
+            <div class="nav-user">
+                <div class="nav-avatar" id="nav-avatar">P</div>
+                <div class="nav-user-info">
+                    <span id="nav-user-name" class="nav-user-name">Nama Penjual</span>
+                    <span id="nav-user-role" class="nav-user-role">Penjual</span>
+                </div>
+            </div>
+            <button id="btn-logout" class="btn-nav-logout"><i class="fas fa-sign-out-alt"></i> Keluar</button>
+        </div>
+    </nav>
+
+    <main id="app-container">
+        <!-- DASHBOARD PENJUAL -->
+        <div id="seller-view" class="view-section active">
+            <div class="page-content">
+                <div class="page-header">
+                    <div>
+                        <h2 class="page-title"><i class="fas fa-store"></i> Dashboard Penjual</h2>
+                        <p class="page-subtitle" id="seller-store-name">Toko Anda</p>
+                    </div>
+                </div>
+
+                <!-- Seller Tabs -->
+                <div class="tabs-wrapper">
+                    <button class="tab-pill active" data-seller-tab="seller-tab-menu"><i class="fas fa-utensils"></i> Kelola Menu</button>
+                    <button class="tab-pill" data-seller-tab="seller-tab-orders"><i class="fas fa-bell"></i> Pesanan Masuk <span class="badge" id="badge-orders">0</span></button>
+                    <button class="tab-pill" data-seller-tab="seller-tab-history"><i class="fas fa-history"></i> Riwayat</button>
+                </div>
+
+                <!-- Tab: Kelola Menu -->
+                <div id="seller-tab-menu" class="tab-panel active">
+                    <div class="card-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-list"></i> Daftar Menu</h3>
+                            <button class="btn-action" id="btn-add-menu"><i class="fas fa-plus"></i> Tambah Menu</button>
+                        </div>
+                        <div class="menu-grid-seller" id="seller-menu-grid"></div>
+                    </div>
+                </div>
+
+                <!-- Tab: Pesanan Masuk -->
+                <div id="seller-tab-orders" class="tab-panel">
+                    <div class="card-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-inbox"></i> Pesanan Baru</h3>
+                        </div>
+                        <div id="seller-incoming-orders" class="order-list"></div>
+                    </div>
+                </div>
+
+                <!-- Tab: Riwayat -->
+                <div id="seller-tab-history" class="tab-panel">
+                    <div class="card-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-history"></i> Riwayat Transaksi</h3>
+                        </div>
+                        <div id="seller-history-list" class="order-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL: TAMBAH/EDIT MENU -->
+    <div id="modal-add-menu" class="modal-overlay" style="display:none;">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="modal-menu-title">Tambah Menu</h3>
+                <button class="modal-close" onclick="closeModal('modal-add-menu')"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="form-add-menu" class="modal-form">
+                <input type="hidden" id="menu-edit-id">
+                <div class="form-field">
+                    <label>Nama Menu</label>
+                    <input type="text" id="input-menu-name" placeholder="Contoh: Nasi Goreng Spesial" required>
+                </div>
+                <div class="form-field">
+                    <label>Harga (Rp)</label>
+                    <input type="number" id="input-menu-price" placeholder="Contoh: 15000" min="0" required>
+                </div>
+                <div class="form-field">
+                    <label>Deskripsi</label>
+                    <textarea id="input-menu-desc" placeholder="Deskripsi singkat menu..." rows="3"></textarea>
+                </div>
+                <div class="form-field">
+                    <label>Kategori</label>
+                    <select id="input-menu-category">
+                        <option value="Makanan">🍛 Makanan</option>
+                        <option value="Minuman">🥤 Minuman</option>
+                        <option value="Snack">🍟 Snack</option>
+                        <option value="Lainnya">📦 Lainnya</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('modal-add-menu')">Batal</button>
+                    <button type="submit" class="btn-primary-solid">Simpan Menu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: DETAIL PESANAN -->
+    <div id="modal-order-detail" class="modal-overlay" style="display:none;">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Detail Pesanan</h3>
+                <button class="modal-close" onclick="closeModal('modal-order-detail')"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="modal-order-content" class="modal-order-content"></div>
+        </div>
+    </div>
+
+    <script src="../core/User.js"></script>
+    <script src="../core/BaseModels.js"></script>
+    <script src="Penjual.js"></script>
+    <script src="../core/Database.js"></script>
+    <script src="app_penjual.js"></script>
+</body>
+</html>
