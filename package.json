@@ -4,7 +4,12 @@
   "description": "",
   "main": "login.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:admin": "npm run dev --prefix admin",
+    "dev:penjual": "npm run dev --prefix penjual",
+    "dev:pembeli": "npm run dev --prefix pembeli",
+    "dev:root": "npx serve . -p 8080",
+    "start-all": "npx concurrently \"npm run dev:admin\" \"npm run dev:penjual\" \"npm run dev:pembeli\" \"npm run dev:root\""
   },
   "keywords": [],
   "author": "",
@@ -12,5 +17,8 @@
   "type": "commonjs",
   "dependencies": {
     "json-server": "^0.17.4"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
   }
 }
