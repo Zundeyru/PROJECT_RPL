@@ -2,6 +2,13 @@
 // login.js — Main Login Logic
 // =============================================================
 
+// --- KONFIGURASI URL APLIKASI ---
+// JIKA SUDAH DI-DEPLOY KE VERCEL, GANTI URL DI BAWAH INI:
+const URL_ADMIN = "http://localhost:3000";     // Ganti jadi misal: "https://kantin-admin.vercel.app"
+const URL_PENJUAL = "http://localhost:3001";   // Ganti jadi misal: "https://kantin-penjual.vercel.app"
+const URL_PEMBELI = "http://localhost:3002";   // Ganti jadi misal: "https://kantin-pembeli.vercel.app"
+// --------------------------------
+
 document.addEventListener('DOMContentLoaded', () => {
     // Pastikan jika ada user login, kembalikan ke login page
     // Tidak perlu simpan currentUser di localStorage jika ini murni SPA sederhana,
@@ -53,15 +60,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (user.role === 'admin') {
                             const userData = btoa(unescape(encodeURIComponent(JSON.stringify(user))));
                             const returnUrl = encodeURIComponent(window.location.href);
-                            window.location.href = `http://localhost:3000?u=${userData}&from=${returnUrl}`;
+                            window.location.href = `${URL_ADMIN}?u=${userData}&from=${returnUrl}`;
                         } else if (user.role === 'seller') {
                             const userData = btoa(unescape(encodeURIComponent(JSON.stringify(user))));
                             const returnUrl = encodeURIComponent(window.location.href);
-                            window.location.href = `http://localhost:3001?u=${userData}&from=${returnUrl}`;
+                            window.location.href = `${URL_PENJUAL}?u=${userData}&from=${returnUrl}`;
                         } else if (user.role === 'buyer') {
                             const userData = btoa(unescape(encodeURIComponent(JSON.stringify(user))));
                             const returnUrl = encodeURIComponent(window.location.href);
-                            window.location.href = `http://localhost:3002?u=${userData}&from=${returnUrl}`;
+                            window.location.href = `${URL_PEMBELI}?u=${userData}&from=${returnUrl}`;
                         }
                     } else {
                         errText.textContent = "Username atau password salah!";
@@ -173,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('umm_active_user', JSON.stringify(user));
                 const userData = btoa(unescape(encodeURIComponent(JSON.stringify(user))));
                 const returnUrl = encodeURIComponent(window.location.href);
-                window.location.href = `http://localhost:3002?u=${userData}&from=${returnUrl}`;
+                window.location.href = `${URL_PEMBELI}?u=${userData}&from=${returnUrl}`;
             })
             .catch(err => {
                 console.error(err);
