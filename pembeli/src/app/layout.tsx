@@ -15,6 +15,8 @@ export const metadata: Metadata = {
   description: "Aplikasi Kantin UMM untuk Pembeli",
 };
 
+import { Suspense } from "react";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -23,13 +25,15 @@ export default function RootLayout({
   return (
     <html lang="id" className={`${font.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-background">
-        <AuthWrapper>
-          <CartProvider>
-            <AppLayout>
-              {children}
-            </AppLayout>
-          </CartProvider>
-        </AuthWrapper>
+        <Suspense fallback={null}>
+          <AuthWrapper>
+            <CartProvider>
+              <AppLayout>
+                {children}
+              </AppLayout>
+            </CartProvider>
+          </AuthWrapper>
+        </Suspense>
       </body>
     </html>
   );
