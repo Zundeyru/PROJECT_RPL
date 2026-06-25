@@ -2,11 +2,15 @@ import { NextResponse } from 'next/server';
 import webPush from 'web-push';
 import { supabase } from '@/lib/supabase';
 
-webPush.setVapidDetails(
-  'mailto:your-email@example.com',
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY as string,
-  process.env.VAPID_PRIVATE_KEY as string
-);
+if (process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+  webPush.setVapidDetails(
+    'mailto:your-email@example.com',
+    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY as string,
+    process.env.VAPID_PRIVATE_KEY as string
+  );
+} else {
+  console.warn('VAPID keys are missing. Push notifications will not work.');
+}
 
 export async function POST(req: Request) {
   try {
