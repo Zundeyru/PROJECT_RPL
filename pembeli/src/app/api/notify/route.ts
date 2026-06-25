@@ -43,7 +43,7 @@ export async function POST(req: Request) {
     const payload = JSON.stringify({
       title: title || 'Notifikasi Baru',
       body: message || 'Ada pembaruan baru',
-      icon: 'https://upload.wikimedia.org/wikipedia/commons/f/f6/Logo_UMM_Universitas_Muhammadiyah_Malang.png'
+      icon: '/logo.png'
     });
 
     await webPush.sendNotification(subscription, payload);

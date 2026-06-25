@@ -23,8 +23,11 @@ const INITIAL: FormData = {
 };
 
 function mask(value: string, type: "phone" | "email") {
+  if (!value || value === "-") return value;
   if (type === "phone") return value.replace(/.(?=.{4})/g, "•");
+  if (!value.includes("@")) return value;
   const [local, domain] = value.split("@");
+  if (local.length <= 2) return "•".repeat(local.length) + "@" + domain;
   return local.slice(0, 2) + "•".repeat(local.length - 2) + "@" + domain;
 }
 

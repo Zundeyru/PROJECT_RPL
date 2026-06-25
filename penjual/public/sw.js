@@ -10,8 +10,8 @@ self.addEventListener('push', function (event) {
     const title = data.title || 'Pesanan Baru Masuk!';
     const options = {
       body: data.body || 'Anda memiliki pesanan baru, segera cek Dashboard.',
-      icon: data.icon || 'https://upload.wikimedia.org/wikipedia/commons/f/f6/Logo_UMM_Universitas_Muhammadiyah_Malang.png',
-      badge: 'https://upload.wikimedia.org/wikipedia/commons/f/f6/Logo_UMM_Universitas_Muhammadiyah_Malang.png',
+      icon: data.icon || '/logo.png',
+      badge: '/logo.png',
       vibrate: [200, 100, 200, 100, 200, 100, 200],
       data: {
         dateOfArrival: Date.now(),
