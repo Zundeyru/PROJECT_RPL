@@ -4,9 +4,9 @@
 
 // --- KONFIGURASI URL APLIKASI ---
 // JIKA SUDAH DI-DEPLOY KE VERCEL, GANTI URL DI BAWAH INI:
-const URL_ADMIN = "http://localhost:3000";     // Ganti jadi misal: "https://kantin-admin.vercel.app"
-const URL_PENJUAL = "http://localhost:3001";   // Ganti jadi misal: "https://kantin-penjual.vercel.app"
-const URL_PEMBELI = "http://localhost:3002";   // Ganti jadi misal: "https://kantin-pembeli.vercel.app"
+const URL_ADMIN = "https://project-rpl-ao1t.vercel.app";
+const URL_PENJUAL = "https://kantinpenjual.vercel.app";
+const URL_PEMBELI = "https://kantinpembeli.vercel.app";
 // --------------------------------
 
 document.addEventListener('DOMContentLoaded', () => {
