@@ -13,7 +13,7 @@ export default function LogoutPage() {
     
     // Ambil origin asli saat user login
     const origin = localStorage.getItem("umm_login_origin");
-    const fallbackUrl = "http://127.0.0.1:5500/index.html";
+    const fallbackUrl = process.env.NEXT_PUBLIC_PORTAL_URL || "http://127.0.0.1:5500/index.html";
     
     // Alihkan kembali ke halaman index
     window.location.replace(origin ? origin : fallbackUrl);

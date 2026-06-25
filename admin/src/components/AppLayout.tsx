@@ -22,7 +22,7 @@ interface ActiveUser {
 
 // Ambil URL halaman login utama yang tersimpan
 function getLoginUrl(): string {
-  return localStorage.getItem("umm_login_origin") ?? "http://127.0.0.1:5500/index.html";
+  return localStorage.getItem("umm_login_origin") ?? (process.env.NEXT_PUBLIC_PORTAL_URL || "http://127.0.0.1:5500/index.html");
 }
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {

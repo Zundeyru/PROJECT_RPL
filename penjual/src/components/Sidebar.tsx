@@ -12,11 +12,11 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
-  const [logoutUrl, setLogoutUrl] = useState("http://127.0.0.1:5500/index.html");
+  const [logoutUrl, setLogoutUrl] = useState(process.env.NEXT_PUBLIC_PORTAL_URL || "http://127.0.0.1:5500/index.html");
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setLogoutUrl(localStorage.getItem("umm_login_origin") || "http://127.0.0.1:5500/index.html");
+    // Jalankan di client side saja
+    setLogoutUrl(localStorage.getItem("umm_login_origin") || (process.env.NEXT_PUBLIC_PORTAL_URL || "http://127.0.0.1:5500/index.html"));
   }, []);
 
   const menuItems = [

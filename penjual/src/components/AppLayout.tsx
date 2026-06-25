@@ -35,7 +35,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     // Check authentication
     const userStr = localStorage.getItem("umm_active_user");
     if (!userStr) {
-      const fallbackUrl = "http://127.0.0.1:5500/index.html";
+      const fallbackUrl = process.env.NEXT_PUBLIC_PORTAL_URL || "http://127.0.0.1:5500/index.html";
       const origin = localStorage.getItem("umm_login_origin");
       window.location.href = origin || fallbackUrl;
       return;
@@ -49,7 +49,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setStoreName(user.storeName || user.name || "Toko Saya");
     } catch {
-      const fallbackUrl = "http://127.0.0.1:5500/index.html";
+      const fallbackUrl = process.env.NEXT_PUBLIC_PORTAL_URL || "http://127.0.0.1:5500/index.html";
       window.location.href = fallbackUrl;
       return;
     }

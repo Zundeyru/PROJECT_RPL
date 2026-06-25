@@ -35,7 +35,7 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
     if (!activeUser) {
       // If no user found and no URL param, bounce to main login page
       const origin = localStorage.getItem("umm_login_origin");
-      const fallbackUrl = "http://127.0.0.1:5500/index.html";
+      const fallbackUrl = process.env.NEXT_PUBLIC_PORTAL_URL || "http://127.0.0.1:5500/index.html";
       window.location.href = origin || fallbackUrl;
       return;
     }
