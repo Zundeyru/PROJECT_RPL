@@ -8,7 +8,7 @@ import { api } from '@/services/api';
 export default function OrderDetailPage() {
   const router = useRouter();
   const params = useParams();
-  const orderId = params.id as string;
+  const baseOrderId = params.id as string; // This is now the base ID (e.g. ORD-171890000)
   
   const [order, setOrder] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -16,7 +16,7 @@ export default function OrderDetailPage() {
   const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
-    if (!orderId) return;
+    if (!baseOrderId) return;
     
     const fetchOrder = async () => {
       try {
@@ -27,10 +27,30 @@ export default function OrderDetailPage() {
         }
         const user = JSON.parse(userStr);
         const orders = await api.getOrdersByBuyer(user.id);
-        const found = orders.find(o => o.id === orderId);
         
-        if (found) {
-          setOrder(found);
+        // Find all orders that share this base checkout ID
+        const foundOrders = orders.filter((o: any) => o.id.startsWith(baseOrderId));
+        
+        if (foundOrders.length > 0) {
+          const baseOrder = foundOrders[0];
+          
+          // Combine them into a single Unified Receipt Object
+          const combinedOrder = {
+            id: baseOrderId,
+            status: baseOrder.status, // Ideally, we should check if all are 'Selesai', but taking the first is okay for now
+            created_at: baseOrder.created_at,
+            service_method: baseOrder.service_method,
+            payment_method: baseOrder.payment_method,
+            notes: foundOrders.map((o: any) => o.notes).filter(Boolean).join(" | "),
+            total_amount: foundOrders.reduce((sum: number, o: any) => sum + (o.total_amount || 0), 0),
+            tenants: foundOrders.map((o: any) => ({
+              tenant_id: o.store_id,
+              tenant_name: o.store_name,
+              items: o.items || []
+            }))
+          };
+
+          setOrder(combinedOrder);
         } else {
           setError("Pesanan tidak ditemukan.");
         }
@@ -43,7 +63,7 @@ export default function OrderDetailPage() {
     };
     
     fetchOrder();
-  }, [orderId, router]);
+  }, [baseOrderId, router]);
 
   const handleCopyId = () => {
     if (order) {
@@ -79,7 +99,14 @@ export default function OrderDetailPage() {
     );
   }
 
-  const subtotal = order.items?.reduce((sum: number, item: any) => sum + (item.priceAtTime * item.qty), 0) || 0;
+  // Calculate Subtotal dynamically from all tenants
+  let subtotal = 0;
+  order.tenants.forEach((tenant: any) => {
+    tenant.items.forEach((item: any) => {
+      subtotal += (item.priceAtTime * item.qty);
+    });
+  });
+  
   const storedTotal = order.total_amount || 0;
   const calculatedTax = storedTotal - subtotal;
   const shortId = order.id.split('-').pop();
@@ -103,9 +130,8 @@ export default function OrderDetailPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-24 md:pb-12 font-sans selection:bg-orange-200 relative">
       
-      {/* Premium Header Background (Desktop & Mobile Adaptive) */}
+      {/* Premium Header Background */}
       <div className="absolute top-0 left-0 right-0 h-[300px] md:h-[400px] bg-gradient-to-br from-orange-500 via-rose-500 to-amber-600 z-0 overflow-hidden">
-        {/* Abstract shapes for dynamic feel */}
         <div className="absolute -top-20 -right-20 w-64 h-64 md:w-96 md:h-96 bg-white/10 blur-3xl rounded-full" />
         <div className="absolute top-20 -left-10 w-40 h-40 md:w-80 md:h-80 bg-orange-300/20 blur-2xl rounded-full" />
       </div>
@@ -152,49 +178,53 @@ export default function OrderDetailPage() {
               {/* Divider */}
               <div className="w-full border-t border-dashed border-slate-200 mb-8" />
 
-              {/* Tenant Block */}
-              <div className="bg-slate-50 rounded-2xl p-5 border border-slate-100 mb-6 transition-all hover:border-orange-200 hover:shadow-sm">
-                <div className="flex items-center gap-3 mb-4 pb-4 border-b border-slate-200">
-                  <div className="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 shadow-sm border border-orange-200">
-                    <Store size={18} />
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-0.5">Tenant Penjual</p>
-                    <p className="font-bold text-sm md:text-base text-slate-800">{order.store_name}</p>
-                  </div>
-                </div>
-                
-                <div className="space-y-5">
-                  {order.items && order.items.map((item: any, idx: number) => (
-                    <div key={idx} className="group">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1 pr-4">
-                          <p className="font-bold text-slate-800 text-sm md:text-base leading-tight group-hover:text-orange-600 transition-colors">
-                            {item.name}
-                          </p>
-                          <p className="text-xs md:text-sm text-slate-500 mt-1 font-medium bg-white px-2 py-0.5 inline-block rounded-md border border-slate-100">
-                            {item.qty}x @ Rp {(item.priceAtTime).toLocaleString('id-ID')}
-                          </p>
-                        </div>
-                        <p className="font-bold text-slate-800 text-sm md:text-base whitespace-nowrap pt-0.5">
-                          Rp {(item.priceAtTime * item.qty).toLocaleString('id-ID')}
-                        </p>
+              {/* DYNAMIC MULTI-TENANT BLOCKS */}
+              <div className="space-y-6">
+                {order.tenants.map((tenant: any, tIdx: number) => (
+                  <div key={tIdx} className="bg-slate-50 rounded-2xl p-5 border border-slate-100 transition-all hover:border-orange-200 hover:shadow-sm">
+                    <div className="flex items-center gap-3 mb-4 pb-4 border-b border-slate-200">
+                      <div className="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 shadow-sm border border-orange-200">
+                        <Store size={18} />
                       </div>
-                      
-                      {item.notes && (
-                        <div className="mt-2.5 pl-3 border-l-2 border-orange-200">
-                          <p className="text-xs md:text-sm text-slate-500 italic leading-snug">
-                            "{item.notes}"
-                          </p>
-                        </div>
-                      )}
+                      <div>
+                        <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-0.5">Tenant Penjual</p>
+                        <p className="font-bold text-sm md:text-base text-slate-800">{tenant.tenant_name}</p>
+                      </div>
                     </div>
-                  ))}
-                </div>
+                    
+                    <div className="space-y-5">
+                      {tenant.items && tenant.items.map((item: any, idx: number) => (
+                        <div key={idx} className="group">
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1 pr-4">
+                              <p className="font-bold text-slate-800 text-sm md:text-base leading-tight group-hover:text-orange-600 transition-colors">
+                                {item.name}
+                              </p>
+                              <p className="text-xs md:text-sm text-slate-500 mt-1 font-medium bg-white px-2 py-0.5 inline-block rounded-md border border-slate-100">
+                                {item.qty}x @ Rp {(item.priceAtTime).toLocaleString('id-ID')}
+                              </p>
+                            </div>
+                            <p className="font-bold text-slate-800 text-sm md:text-base whitespace-nowrap pt-0.5">
+                              Rp {(item.priceAtTime * item.qty).toLocaleString('id-ID')}
+                            </p>
+                          </div>
+                          
+                          {item.notes && (
+                            <div className="mt-2.5 pl-3 border-l-2 border-orange-200">
+                              <p className="text-xs md:text-sm text-slate-500 italic leading-snug">
+                                "{item.notes}"
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
 
               {order.notes && (
-                <div className="bg-orange-50/50 p-4 md:p-5 rounded-2xl border border-orange-100/50 flex items-start gap-3">
+                <div className="bg-orange-50/50 p-4 md:p-5 rounded-2xl border border-orange-100/50 flex items-start gap-3 mt-6">
                    <Receipt className="w-5 h-5 md:w-6 md:h-6 text-orange-400 shrink-0 mt-0.5" />
                    <div>
                       <p className="text-xs md:text-sm font-bold text-orange-800/60 uppercase tracking-wider mb-1">Catatan Keseluruhan</p>
@@ -211,11 +241,9 @@ export default function OrderDetailPage() {
             {/* Payment Summary Ticket */}
             <div className="bg-white/90 backdrop-blur-xl rounded-[32px] p-1 shadow-lg border border-white md:mt-0 mt-2">
               <div className="bg-slate-900 rounded-[28px] p-6 pb-8 md:p-8 text-white relative overflow-hidden">
-                {/* Dark ticket decorative elements */}
                 <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/5 rounded-full blur-2xl" />
                 <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-orange-500/10 rounded-full blur-2xl" />
 
-                {/* Status Badge inside summary on desktop */}
                 <div className="flex justify-between items-start mb-6">
                   <p className="text-white/60 font-medium text-xs md:text-sm uppercase tracking-widest mb-1">Status</p>
                   <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border ${statusConfig.bg.replace('/80','/20')} ${statusConfig.border.replace('300','600')} ${statusConfig.color.replace('700','300')} shadow-sm transition-all duration-300`}>
@@ -226,11 +254,11 @@ export default function OrderDetailPage() {
 
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-between text-white/70 text-sm md:text-base">
-                    <span>Subtotal</span>
+                    <span>Subtotal Makanan</span>
                     <span className="font-medium text-white">Rp {subtotal.toLocaleString('id-ID')}</span>
                   </div>
                   <div className="flex justify-between text-white/70 text-sm md:text-base">
-                    <span>Pajak (11%)</span>
+                    <span>Pajak & Biaya (11%)</span>
                     <span className="font-medium text-white">Rp {calculatedTax.toLocaleString('id-ID')}</span>
                   </div>
                 </div>
@@ -268,7 +296,7 @@ export default function OrderDetailPage() {
               </div>
             </div>
 
-            {/* Desktop Action Button (Rendered within the flow on Desktop) */}
+            {/* Desktop Action Button */}
             <div className="hidden md:block mt-2">
               <button onClick={() => router.push('/')} className="w-full bg-orange-600 text-white font-semibold py-4 rounded-2xl shadow-xl shadow-orange-600/20 active:scale-[0.98] hover:bg-orange-700 hover:shadow-orange-700/30 transition-all flex items-center justify-center gap-2 group">
                 Kembali ke Beranda

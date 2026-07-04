@@ -102,6 +102,9 @@ export default function CheckoutPage() {
         return;
       }
 
+      // Generate ONE unified order ID for the entire checkout session
+      const baseId = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
       // Create an order for each store — include both per-item notes and store-level notes
       const orderPromises = Object.keys(itemsByStore).map(storeId => {
         const storeItems = itemsByStore[storeId];
@@ -113,6 +116,7 @@ export default function CheckoutPage() {
         const orderNote = storeNotes[storeId] || "";
 
         return api.createOrder({
+          id: `${baseId}-${storeId}`, // Unique ID for Supabase, grouped by baseId
           buyerId: activeUser?.id || "unknown",
           buyerName: activeUser?.name || "Pelanggan",
           storeId: storeId,
@@ -157,12 +161,10 @@ export default function CheckoutPage() {
       clearSelectedItems();
       showToast('success', "🎉 Pesanan berhasil dibuat!");
       
-      const newOrderId = createdOrders[0]?.id;
-      
       if (paymentMethod === 'Cash') {
-        router.push(newOrderId ? `/pesanan/${newOrderId}` : '/history');
+        router.push(`/pesanan/${baseId}`);
       } else {
-        router.push(`/payment?order_id=${newOrderId || ''}&total_price=${total}&method=${paymentMethod}`);
+        router.push(`/payment?order_id=${baseId}&total_price=${total}&method=${paymentMethod}`);
       }
     } catch (e: any) {
       console.error(e);

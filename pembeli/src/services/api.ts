@@ -35,9 +35,9 @@ export const api = {
 
   // --- ORDERS ---
   async createOrder(order: any) {
-    const uniqueId = Math.floor(Math.random() * 10000);
+    const orderId = order.id || `ORD-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
     const { data, error } = await supabase.from('orders').insert([{
-      id: `ORD-${Date.now()}-${uniqueId}`,
+      id: orderId,
       buyer_id: order.buyerId,
       buyer_name: order.buyerName,
       store_id: order.storeId,
