@@ -38,12 +38,12 @@ export default function OrderDetailPage() {
             created_at: baseOrder.created_at,
             service_method: baseOrder.service_method,
             payment_method: baseOrder.payment_method,
-            notes: foundOrders.map((o: any) => o.notes).filter(Boolean).join(" | "),
             total_amount: foundOrders.reduce((sum: number, o: any) => sum + (o.total_amount || 0), 0),
             tenants: foundOrders.map((o: any) => ({
               tenant_id: o.store_id,
               tenant_name: o.store_name,
-              items: o.items || []
+              items: o.items || [],
+              tenant_note: o.notes || ""
             }))
           };
           setOrder(combinedOrder);
@@ -212,19 +212,19 @@ export default function OrderDetailPage() {
                       </div>
                     ))}
                   </div>
+
+                  {tenant.tenant_note && (
+                    <div className="mt-4 pt-4 border-t border-dashed border-[#8B4513]/20 flex items-start gap-2">
+                       <Receipt className="w-4 h-4 text-[#8B4513] shrink-0 mt-0.5" />
+                       <div>
+                          <p className="text-[11px] md:text-xs font-bold text-[#8B4513]/70 uppercase tracking-wider mb-0.5">Catatan Untuk Penjual</p>
+                          <p className="text-xs md:text-sm font-medium text-gray-800 italic">"{tenant.tenant_note}"</p>
+                       </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
-
-            {order.notes && (
-              <div className="bg-orange-50/70 p-4 md:p-5 rounded-2xl border border-orange-200 flex items-start gap-3 mt-6">
-                 <Receipt className="w-5 h-5 md:w-6 md:h-6 text-[#8B4513] shrink-0 mt-0.5" />
-                 <div>
-                    <p className="text-xs md:text-sm font-bold text-[#8B4513]/70 uppercase tracking-wider mb-1">Catatan Keseluruhan</p>
-                    <p className="text-sm md:text-base font-medium text-gray-800 italic">"{order.notes}"</p>
-                 </div>
-              </div>
-            )}
           </div>
 
           {/* RIGHT COLUMN: Financials & Meta */}
