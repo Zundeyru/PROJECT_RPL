@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Heart, Plus } from 'lucide-react';
+import { Heart, Plus, Minus } from 'lucide-react';
 import { useCart, CartProduct } from '@/context/CartContext';
 import { useRouter } from 'next/navigation';
 import { useFavorites } from '@/hooks/useFavorites';
@@ -13,13 +13,16 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, storeIsOpen = true }: ProductCardProps) {
-  const { addToCart } = useCart();
+  const { items, addToCart, updateQuantity, removeItem } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { startFlyAnimation } = useFlyToCart();
   const [animateCart, setAnimateCart] = useState(false);
   const router = useRouter();
 
   const productId = product.id || `${product.storeId}-${product.name.replace(/\s+/g, '-')}`;
+
+  const cartItem = items.find(item => item.product.id === productId);
+  const quantity = cartItem ? cartItem.quantity : 0;
 
   const isLiked = isFavorite(productId);
 
@@ -38,12 +41,32 @@ export default function ProductCard({ product, storeIsOpen = true }: ProductCard
     };
     addToCart(cartProduct, 1);
     
-    // Start fly to cart animation
+    // Start fly to cart animation ONLY on first add
     startFlyAnimation(e.clientX, e.clientY, product.image);
     
     // Tiny animation feedback on the button itself
     setAnimateCart(true);
     setTimeout(() => setAnimateCart(false), 300);
+  };
+
+  const handleIncrease = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (cartItem) {
+      updateQuantity(cartItem.id, 1);
+    }
+  };
+
+  const handleDecrease = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (cartItem) {
+      if (cartItem.quantity <= 1) {
+        removeItem(cartItem.id);
+      } else {
+        updateQuantity(cartItem.id, -1);
+      }
+    }
   };
 
   const handleLike = (e: React.MouseEvent) => {
@@ -82,15 +105,42 @@ export default function ProductCard({ product, storeIsOpen = true }: ProductCard
         <h3 className="font-bold text-sm text-text-primary line-clamp-2 leading-tight">{product.name}</h3>
         <div className="flex items-center justify-between mt-auto pt-2">
           <p className="font-extrabold text-sm text-primary">Rp. {(product.price || 0).toLocaleString('id-ID')}</p>
-          <button 
-            onClick={handleAddToCart}
-            disabled={!isAvailable}
-            className={`w-7 h-7 rounded-full flex items-center justify-center shadow-md transition-all active:scale-90 
-              ${isAvailable ? 'bg-primary text-white hover:bg-primary-hover hover:scale-110' : 'bg-sidebar-border text-text-muted cursor-not-allowed'}
-              ${animateCart ? 'scale-125' : ''}`}
+          
+          {/* Inline Cart Controls */}
+          <div 
+             className={`flex items-center justify-between rounded-full h-8 shadow-md transition-all duration-300 ease-out overflow-hidden
+              ${!isAvailable ? 'bg-sidebar-border text-text-muted cursor-not-allowed' : quantity > 0 ? 'bg-[#FFD700] text-black' : 'bg-primary text-white'}
+              ${quantity > 0 ? 'w-20 px-1' : 'w-8 px-0'}`}
           >
-            <Plus size={16} className="stroke-[3]" />
-          </button>
+            {/* Minus Button */}
+            <button
+               onClick={handleDecrease}
+               className={`h-full flex items-center justify-center transition-all duration-300 rounded-full
+                 ${quantity > 0 ? 'w-6 opacity-100 hover:bg-black/10 active:scale-90' : 'w-0 opacity-0 pointer-events-none'}`}
+            >
+              <Minus size={14} strokeWidth={3} />
+            </button>
+            
+            {/* Quantity Text */}
+            <span className={`text-xs font-bold text-center transition-all duration-300 select-none
+                 ${quantity > 0 ? 'w-4 opacity-100' : 'w-0 opacity-0 text-[0px]'}`}>
+              {quantity > 0 ? quantity : ''}
+            </span>
+
+            {/* Plus / Add Button */}
+            <button
+               onClick={quantity > 0 ? handleIncrease : handleAddToCart}
+               disabled={!isAvailable}
+               className={`h-full flex items-center justify-center transition-all duration-300 rounded-full
+                 ${quantity > 0 
+                   ? 'w-6 hover:bg-black/10 active:scale-90' 
+                   : 'w-8 hover:bg-primary-hover hover:scale-110 active:scale-90'
+                 }
+                 ${animateCart && quantity === 0 ? 'scale-125' : ''}`}
+            >
+               <Plus size={16} className="stroke-[3]" />
+            </button>
+          </div>
         </div>
       </div>
     </div>
