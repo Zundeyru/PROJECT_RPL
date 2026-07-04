@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
+import { FlyToCartProvider } from "@/context/FlyToCartContext";
 import AuthWrapper from "@/components/AuthWrapper";
 import AppLayout from "@/components/AppLayout";
 
@@ -28,9 +29,11 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <AuthWrapper>
             <CartProvider>
-              <AppLayout>
-                {children}
-              </AppLayout>
+              <FlyToCartProvider>
+                <AppLayout>
+                  {children}
+                </AppLayout>
+              </FlyToCartProvider>
             </CartProvider>
           </AuthWrapper>
         </Suspense>

@@ -5,6 +5,7 @@ import { Heart, Plus } from 'lucide-react';
 import { useCart, CartProduct } from '@/context/CartContext';
 import { useRouter } from 'next/navigation';
 import { useFavorites } from '@/hooks/useFavorites';
+import { useFlyToCart } from '@/context/FlyToCartContext';
 
 interface ProductCardProps {
   product: any;
@@ -14,6 +15,7 @@ interface ProductCardProps {
 export default function ProductCard({ product, storeIsOpen = true }: ProductCardProps) {
   const { addToCart } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { startFlyAnimation } = useFlyToCart();
   const [animateCart, setAnimateCart] = useState(false);
   const router = useRouter();
 
@@ -36,7 +38,10 @@ export default function ProductCard({ product, storeIsOpen = true }: ProductCard
     };
     addToCart(cartProduct, 1);
     
-    // Tiny animation feedback
+    // Start fly to cart animation
+    startFlyAnimation(e.clientX, e.clientY, product.image);
+    
+    // Tiny animation feedback on the button itself
     setAnimateCart(true);
     setTimeout(() => setAnimateCart(false), 300);
   };

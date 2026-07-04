@@ -64,7 +64,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               <span className="text-text-muted text-sm font-medium group-hover:text-primary transition-colors">Cari makanan...</span>
             </Link>
 
-            <Link href="/cart" className="relative p-2.5 rounded-xl bg-surface-hover text-primary hover:bg-primary hover:text-white transition-colors duration-200 group">
+            <Link href="/cart" id="global-cart-icon-desktop" className="relative p-2.5 rounded-xl bg-surface-hover text-primary hover:bg-primary hover:text-white transition-colors duration-200 group">
               <ShoppingCart size={22} className="stroke-[2.5]" />
               {isHydrated && totalItems > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full border-2 border-white group-hover:border-primary flex items-center justify-center text-[10px] text-white font-bold">

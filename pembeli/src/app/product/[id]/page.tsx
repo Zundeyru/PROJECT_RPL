@@ -6,12 +6,14 @@ import { api } from '@/services/api';
 import { Undo2, Heart, Plus } from 'lucide-react';
 import { useCart, CartProduct } from '@/context/CartContext';
 import { useFavorites } from '@/hooks/useFavorites';
+import { useFlyToCart } from '@/context/FlyToCartContext';
 
 export default function ProductDetail() {
   const params = useParams();
   const router = useRouter();
   const { addToCart } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { startFlyAnimation } = useFlyToCart();
   
   const [product, setProduct] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -41,7 +43,7 @@ export default function ProductDetail() {
     );
   }
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e: React.MouseEvent) => {
     if (!product.isAvailable) return;
     
     const cartProduct: CartProduct = {
@@ -54,6 +56,9 @@ export default function ProductDetail() {
     };
     
     addToCart(cartProduct, 1);
+    
+    // Start fly to cart animation
+    startFlyAnimation(e.clientX, e.clientY, product.image);
     
     setAnimateCart(true);
     setTimeout(() => setAnimateCart(false), 300);
