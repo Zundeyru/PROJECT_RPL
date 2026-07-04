@@ -158,8 +158,12 @@ export default function CheckoutPage() {
       showToast('success', "🎉 Pesanan berhasil dibuat!");
       
       const newOrderId = createdOrders[0]?.id;
-      // Immediately redirect without setTimeout
-      router.push(newOrderId ? `/pesanan/${newOrderId}` : '/history');
+      
+      if (paymentMethod === 'Cash') {
+        router.push(newOrderId ? `/pesanan/${newOrderId}` : '/history');
+      } else {
+        router.push(`/payment?order_id=${newOrderId || ''}&total_price=${total}&method=${paymentMethod}`);
+      }
     } catch (e: any) {
       console.error(e);
       showToast('error', e.message || "Terjadi kesalahan saat memproses pesanan.");

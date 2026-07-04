@@ -1,230 +1,206 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, MapPin, Clock, FileText, CheckCircle2, ChevronRight, Package, Loader2 } from 'lucide-react';
-import { api } from '@/services/api';
+import React from 'react';
+import { ArrowLeft, Plus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
+// Robust mock JSON object handling multi-tenant orders
+const mockOrder = {
+  order_id: "029",
+  status: "Sedang Dimasak",
+  date: "30 May 2026 10:10",
+  notes: "Banyakin sambelnya bu :)",
+  service_method: "Take Away",
+  payment_method: "Qris",
+  campus_tax: 2000,
+  hero_image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=80", 
+  tenants: [
+    {
+      tenant_id: "t1",
+      tenant_name: "Nasi Padang Bu Jamilah",
+      pickup_location: "GKB 3 Lantai 3",
+      items: [
+        { item_id: "i1", name: "Nasi Ayam Rendang", qty: 1, price: 15000 }
+      ]
+    },
+    {
+      tenant_id: "t2",
+      tenant_name: "Es Teh Kampus",
+      pickup_location: "GKB 1 Lantai 1",
+      items: [
+        { item_id: "i2", name: "Es Teh Manis Jumbo", qty: 2, price: 8000 }
+      ]
+    }
+  ]
+};
+
+const mockRecommendations = [
+  { id: 'r1', name: 'Nasi Padang', image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500' },
+  { id: 'r2', name: 'Nasi Padang', image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500' },
+  { id: 'r3', name: 'Nasi Padang', image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500' },
+];
 
 export default function OrderDetailPage() {
   const router = useRouter();
-  const params = useParams();
-  const orderId = params.id as string;
+
+  // Calculate Subtotal dynamically from grouped items
+  const subtotal = mockOrder.tenants.reduce((acc, tenant) => {
+    return acc + tenant.items.reduce((sum, item) => sum + item.price, 0);
+  }, 0);
   
-  const [order, setOrder] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const grandTotal = subtotal + mockOrder.campus_tax;
 
-  useEffect(() => {
-    if (!orderId) return;
-    
-    // Kita panggil getOrdersByBuyer atau fungsi getOrderById
-    // Tapi karena kita tidak punya getOrderById di API pembeli saat ini, kita filter dari getAllOrders atau tambahkan getOrderById.
-    const fetchOrder = async () => {
-      try {
-        const userStr = localStorage.getItem("umm_active_user");
-        if (!userStr) {
-          router.push('/');
-          return;
-        }
-        const user = JSON.parse(userStr);
-        const orders = await api.getOrdersByBuyer(user.id);
-        const found = orders.find(o => o.id === orderId);
-        
-        if (found) {
-          setOrder(found);
-        } else {
-          // Fallback, mungkin pesanan belum tersinkronisasi atau orderId salah
-          console.warn("Order not found");
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchOrder();
-  }, [orderId, router]);
+  // Determine badge color based on status
+  const getStatusColor = (status: string) => {
+    switch(status.toLowerCase()) {
+      case 'sedang dimasak': return 'bg-red-700 text-white';
+      case 'selesai': return 'bg-green-600 text-white';
+      case 'baru': return 'bg-orange-500 text-white';
+      default: return 'bg-gray-500 text-white';
+    }
+  };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center">
-        <Loader2 size={48} className="text-primary animate-spin mb-4" />
-        <p className="text-text-muted font-medium font-poppins">Memuat Detail Pesanan...</p>
-      </div>
-    );
-  }
+  // Generate dynamic pickup info based on tenants
+  const pickupInfoText = mockOrder.tenants.map(t => `Tenant "${t.tenant_name}" ${t.pickup_location}`).join(' dan ');
 
-  if (!order) {
-    return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center">
-        <Package size={64} className="text-text-muted opacity-50 mb-4" />
-        <h2 className="text-2xl font-black text-text-primary mb-2 font-poppins">Pesanan Tidak Ditemukan</h2>
-        <p className="text-text-muted mb-6">Pesanan dengan ID {orderId} tidak ditemukan atau Anda tidak memiliki akses.</p>
-        <button onClick={() => router.push('/history')} className="px-6 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary-hover transition-colors">
-          Kembali ke Riwayat
-        </button>
-      </div>
-    );
-  }
-
-  // Determine progress steps
-  const steps = ["Baru", "Diproses", "Siap Diambil", "Selesai"];
-  const currentStepIndex = steps.indexOf(order.status);
+  // Get all tenant names for the top meta block
+  const allTenantNames = mockOrder.tenants.map(t => t.tenant_name).join(', ');
 
   return (
-    <div className="h-full bg-background font-poppins pb-20 lg:pb-0">
-      {/* Mobile Header (Hidden on Desktop because AppLayout already has a universal desktop header) */}
-      <header className="lg:hidden bg-primary text-white px-4 py-4 flex items-center shadow-md sticky top-0 z-20">
-        <button onClick={() => router.push('/history')} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+    <div className="min-h-screen bg-[#FFF9F2] pb-10 font-sans text-gray-800">
+      {/* Header */}
+      <header className="bg-[#8B4513] text-white p-4 flex items-center shadow-md sticky top-0 z-20">
+        <button onClick={() => router.back()} className="p-2 hover:bg-white/10 rounded-full transition-colors mr-2">
           <ArrowLeft size={24} />
         </button>
-        <h1 className="font-bold text-lg ml-4">Detail Pesanan</h1>
+        <h1 className="font-bold text-lg flex-1 text-center pr-10">Detail Pemesanan</h1>
       </header>
 
-      {/* Main Container */}
-      <main className="px-4 md:px-0 w-full mt-4 md:mt-0 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10">
+      <main className="p-4 max-w-md mx-auto space-y-6">
         
-        {/* LEFT COLUMN: Status & Info */}
-        <div className="lg:col-span-5 space-y-6">
-          {/* Status Card (Ghibli vibe: soft colors, rounded-2xl) */}
-          <div className="bg-white rounded-3xl p-6 shadow-sm border border-border-subtle relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary-light to-primary" />
-            
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <p className="text-xs text-text-muted font-bold tracking-wider uppercase mb-1">ID Pesanan</p>
-                <h2 className="text-xl font-black text-text-primary tracking-tight">{order.id}</h2>
-              </div>
-              <div className="text-right">
-                <span className="inline-block px-3 py-1 bg-primary-light/20 text-primary font-bold rounded-lg text-sm border border-primary/20">
-                  {order.status}
-                </span>
-              </div>
-            </div>
-
-            {/* Progress Tracker */}
-            <div className="relative flex justify-between items-center mt-8 mb-2">
-              <div className="absolute left-0 right-0 top-1/2 h-1 -translate-y-1/2 bg-surface-hover rounded-full overflow-hidden">
-                 <div 
-                   className="h-full bg-primary transition-all duration-1000 ease-out" 
-                   style={{ width: `${(Math.max(currentStepIndex, 0) / (steps.length - 1)) * 100}%` }} 
-                 />
-              </div>
-              
-              {steps.map((step, idx) => {
-                const isCompleted = currentStepIndex >= idx;
-                const isCurrent = currentStepIndex === idx;
-                return (
-                  <div key={step} className="relative flex flex-col items-center z-10">
-                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors duration-500 bg-white ${isCompleted ? 'border-primary' : 'border-border-subtle'}`}>
-                      {isCompleted && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
-                    </div>
-                    <span className={`absolute top-8 text-[10px] md:text-xs font-bold text-center w-20 -ml-10 transition-colors ${isCurrent ? 'text-primary' : 'text-text-muted'}`}>
-                      {step}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
+        {/* Receipt Card */}
+        <div className="bg-white rounded-[24px] p-6 shadow-sm border border-gray-200">
+          
+          {/* Hero Image */}
+          <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden mb-6">
+            <img 
+              src={mockOrder.hero_image} 
+              alt="Hero Item" 
+              className="w-full h-full object-cover"
+            />
           </div>
 
-          {/* Info Card */}
-          <div className="bg-white rounded-3xl p-5 md:p-7 shadow-sm border border-border-subtle space-y-5">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-primary-light/20 flex items-center justify-center shrink-0">
-                <MapPin size={24} className="text-primary" />
-              </div>
-              <div>
-                <p className="text-xs text-text-muted font-bold tracking-wider uppercase">Toko Penjual</p>
-                <p className="text-lg font-bold text-text-primary mt-0.5">{order.store_name}</p>
-                <p className="text-sm text-text-muted flex items-center gap-1.5 mt-1 font-medium bg-surface-hover w-fit px-2.5 py-1 rounded-lg border border-border-subtle">
-                  <span className="w-2 h-2 rounded-full bg-primary inline-block" />
-                  {order.service_method}
-                </p>
-              </div>
-            </div>
-            
-            <div className="w-full h-px bg-border-subtle" />
+          <div className="border-t-[1.5px] border-gray-300 mb-4" />
 
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-primary-light/20 flex items-center justify-center shrink-0">
-                <Clock size={24} className="text-primary" />
+          {/* Meta & Status */}
+          <div className="flex justify-between items-center mb-4">
+            <p className="font-medium text-[15px] text-gray-900">Nomer Pemesanan #{mockOrder.order_id}</p>
+            <span className={`px-3 py-1 rounded-full text-[11px] font-bold ${getStatusColor(mockOrder.status)}`}>
+              {mockOrder.status}
+            </span>
+          </div>
+
+          <div className="border-t-[1.5px] border-gray-300 mb-4" />
+
+          {/* Date & Tenants Summary */}
+          <div className="text-[14px] font-medium text-gray-800 mb-4 space-y-0.5">
+            <p>Tanggal: {mockOrder.date}</p>
+            <p>Tenant: {allTenantNames}</p>
+          </div>
+
+          <div className="border-t-[1.5px] border-gray-300 mb-4" />
+
+          {/* Grouped Items List */}
+          <div className="mb-4 space-y-4">
+            {mockOrder.tenants.map((tenant) => (
+              <div key={tenant.tenant_id}>
+                <p className="font-bold text-[14px] mb-1.5 text-gray-900">Tenant: {tenant.tenant_name}</p>
+                <div className="space-y-1.5">
+                  {tenant.items.map(item => (
+                    <div key={item.item_id} className="flex justify-between text-[14px] font-medium text-gray-800">
+                      <span>{item.name} ({item.qty}x)</span>
+                      <span>Rp. {item.price.toLocaleString('id-ID')}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div>
-                <p className="text-xs text-text-muted font-bold tracking-wider uppercase">Waktu Pemesanan</p>
-                <p className="text-base font-bold text-text-primary mt-0.5">
-                  {new Date(order.created_at).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-                </p>
-                <p className="text-sm text-text-muted mt-0.5 font-medium">
-                  Pukul {new Date(order.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
-                </p>
-              </div>
+            ))}
+          </div>
+
+          <div className="border-t-[1.5px] border-gray-300 mb-4" />
+
+          {/* Financial Summary */}
+          <div className="space-y-1.5 mb-4 text-[14px] font-medium text-gray-800">
+            <div className="flex justify-between">
+              <span>Subtotal</span>
+              <span>Rp. {subtotal.toLocaleString('id-ID')}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Pajak Kampus</span>
+              <span>Rp. {mockOrder.campus_tax.toLocaleString('id-ID')}</span>
             </div>
           </div>
           
-          {/* Payment Summary */}
-          <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-border-subtle space-y-4">
-            <div className="flex justify-between items-center text-sm md:text-base">
-              <span className="text-text-muted font-medium">Metode Pembayaran</span>
-              <span className="font-bold text-text-primary px-3 py-1 bg-surface-hover rounded-lg border border-border-subtle">{order.payment_method}</span>
+          <div className="border-t-[1.5px] border-gray-800 mb-4" />
+          
+          <div className="flex justify-between font-bold text-[15px] text-gray-900 mb-4">
+            <span>Total Harga</span>
+            <span>Rp. {grandTotal.toLocaleString('id-ID')}</span>
+          </div>
+
+          <div className="border-t-[1.5px] border-gray-800 mb-4" />
+
+          {/* Order Details */}
+          <div className="space-y-3.5 text-[14px]">
+            <div>
+              <p className="font-bold text-gray-900 mb-1">Catatan</p>
+              <p className="font-medium text-gray-700">{mockOrder.notes}</p>
             </div>
-            <div className="w-full h-px bg-border-subtle my-2" />
-            <div className="flex justify-between items-center">
-              <span className="font-bold text-text-muted text-base md:text-lg">Total Bayar</span>
-              <span className="font-black text-2xl md:text-3xl text-primary tracking-tight">Rp {(order.total_amount || 0).toLocaleString('id-ID')}</span>
+            <div className="border-t-[1.5px] border-gray-300" />
+            <div>
+              <p className="font-bold text-gray-900 mb-1">Metode Pelayanan</p>
+              <p className="font-medium text-gray-700">{mockOrder.service_method}</p>
+            </div>
+            <div className="border-t-[1.5px] border-gray-300" />
+            <div>
+              <p className="font-bold text-gray-900 mb-1">Metode Pembayaran</p>
+              <p className="font-medium text-gray-700">{mockOrder.payment_method}</p>
+            </div>
+            <div className="border-t-[1.5px] border-gray-300" />
+            <div>
+              <p className="font-bold text-gray-900 mb-1">Info Pengambilan</p>
+              <p className="font-medium text-gray-700 leading-relaxed">
+                Silahkan ambil di {pickupInfoText}.
+              </p>
             </div>
           </div>
+
         </div>
 
-        {/* RIGHT COLUMN: Order Items */}
-        <div className="lg:col-span-7 h-fit">
-          <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-border-subtle sticky top-24">
-            <h3 className="font-black text-xl md:text-2xl text-text-primary mb-6 flex items-center gap-3">
-              <Package size={28} className="text-primary" />
-              Rincian Pesanan
-            </h3>
-            
-            <div className="space-y-4">
-              {order.items.map((item: any, idx: number) => (
-                <div key={idx} className="flex justify-between items-start p-4 hover:bg-surface-hover rounded-2xl transition-colors border border-transparent hover:border-border-subtle">
-                  <div className="flex items-start gap-4">
-                    <div className="bg-primary-light/10 text-primary font-black px-3 py-1.5 rounded-xl border border-primary/20 md:text-lg shrink-0">
-                      {item.qty}x
-                    </div>
-                    <div>
-                      <p className="font-bold text-text-primary md:text-lg leading-tight">{item.name}</p>
-                      {item.notes && <p className="text-sm text-text-muted mt-1.5 italic font-medium bg-white px-3 py-1.5 rounded-lg border border-border-subtle inline-block">" {item.notes} "</p>}
-                    </div>
-                  </div>
-                  <p className="font-bold text-text-primary md:text-lg shrink-0">
-                    Rp {(item.priceAtTime * item.qty).toLocaleString('id-ID')}
+        {/* Action Button */}
+        <button className="w-full bg-[#8B4513] text-white font-bold py-3.5 rounded-xl shadow-md active:scale-95 transition-transform">
+          Pesan Lagi
+        </button>
+
+        {/* Recommendations */}
+        <div className="mt-8">
+          <h2 className="font-bold text-gray-900 mb-4 text-[15px]">Rekomendasi Menu Lainnya</h2>
+          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+            {mockRecommendations.map(rec => (
+              <div key={rec.id} className="flex-shrink-0 w-28 bg-[#DFD9D1] rounded-2xl p-1.5 shadow-sm flex flex-col relative border border-black/5">
+                <div className="relative w-full aspect-square rounded-xl overflow-hidden mb-1">
+                  <img src={rec.image} alt={rec.name} className="w-full h-full object-cover" />
+                  <button className="absolute bottom-1 right-1 w-6 h-6 bg-[#8B4513] text-white rounded-full flex items-center justify-center shadow-md active:scale-95 transition-transform z-10 border border-white/20">
+                    <Plus size={16} strokeWidth={2.5} />
+                  </button>
+                </div>
+                <div className="pb-1 px-1 pt-1 flex-1 flex items-center justify-center">
+                  <p className="text-gray-900 font-bold text-[13px] text-center leading-tight">
+                    {rec.name}
                   </p>
                 </div>
-              ))}
-            </div>
-
-            {order.notes && (
-              <div className="mt-8 p-5 bg-surface-hover rounded-2xl border border-border-subtle relative overflow-hidden">
-                <div className="absolute top-0 left-0 bottom-0 w-1 bg-amber-500" />
-                <p className="text-xs text-text-muted font-bold uppercase tracking-wider mb-2">Catatan Tambahan Keseluruhan Pesanan</p>
-                <p className="text-base text-text-primary font-medium">{order.notes}</p>
               </div>
-            )}
-            
-            {/* Call to action for seller interaction */}
-            {order.status !== 'Selesai' && (
-              <div className="mt-8 pt-6 border-t border-border-subtle">
-                <div className="bg-primary-light/10 border border-primary/20 rounded-2xl p-4 flex items-center gap-4">
-                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shrink-0 shadow-sm">
-                    <Clock className="text-primary animate-pulse" size={24} />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-primary">Pesanan Sedang Dalam Proses</h4>
-                    <p className="text-sm text-primary/80 mt-0.5">Mohon tunggu hingga penjual mengkonfirmasi pesanan Anda.</p>
-                  </div>
-                </div>
-              </div>
-            )}
+            ))}
           </div>
         </div>
 
