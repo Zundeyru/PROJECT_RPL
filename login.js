@@ -224,8 +224,3 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-
-function fillLogin(u, p) {
-    document.getElementById('login-username').value = u;
-    document.getElementById('login-password').value = p;
-}
