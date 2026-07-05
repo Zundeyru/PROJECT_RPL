@@ -200,10 +200,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const icon = this.querySelector('i');
             if (passInput.type === 'password') {
                 passInput.type = 'text';
-                icon.classList.replace('fa-eye', 'fa-eye-slash');
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
             } else {
                 passInput.type = 'password';
-                icon.classList.replace('fa-eye-slash', 'fa-eye');
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
             }
         });
     }
@@ -216,10 +216,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const icon = this.querySelector('i');
             if (passInput.type === 'password') {
                 passInput.type = 'text';
-                icon.classList.replace('fa-eye', 'fa-eye-slash');
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
             } else {
                 passInput.type = 'password';
-                icon.classList.replace('fa-eye-slash', 'fa-eye');
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
             }
         });
     }
