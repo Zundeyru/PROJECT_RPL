@@ -192,11 +192,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Toggle Password Visibility
+    // Toggle Password Visibility (Login)
     const togglePassword = document.getElementById('toggle-password');
     if (togglePassword) {
         togglePassword.addEventListener('click', function() {
             const passInput = document.getElementById('login-password');
+            const icon = this.querySelector('i');
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passInput.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        });
+    }
+
+    // Toggle Password Visibility (Signup)
+    const toggleSignupPassword = document.getElementById('toggle-signup-password');
+    if (toggleSignupPassword) {
+        toggleSignupPassword.addEventListener('click', function() {
+            const passInput = document.getElementById('signup-password');
             const icon = this.querySelector('i');
             if (passInput.type === 'password') {
                 passInput.type = 'text';
